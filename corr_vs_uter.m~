@@ -1,0 +1,26 @@
+van600 = geotiffread('VAN-16bit_600_20008081650_-morph-16.tiff');
+van800 = geotiffread('VAN-16bit_800_20008081650_-morph-16.tiff');
+van1000 = geotiffread('VAN-16bit_1000_20008081650_-morph-16.tiff');
+van1200 = geotiffread('VAN-16bit_1200_20008081650_-morph-16.tiff');
+van1400 = geotiffread('VAN-16bit_1400_20008081650_-morph-16.tiff');
+
+comp_data = geotiffread('van-1705.tiff');
+
+comp_data = imresize(comp_data,size(van600));
+comp_data600 = comp_data;
+comp_data800 = comp_data;
+comp_data1000 = comp_data;
+comp_data1200 = comp_data;
+comp_data1400 = comp_data;
+
+C = van600 + comp_data600;
+van600 = C - comp_data600;
+comp_data600 = C - van600;
+
+C = van800 + comp_data800;
+van800 = C - comp_data800;
+comp_data800 = C - van800;
+
+C = van1000 + comp_data1000;
+van800 = C - comp_data1000;
+comp_data800 = C - van1000;

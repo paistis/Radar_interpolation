@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/morph2.dir/morph2.cpp.o  -o morph2 -rdynamic -lboost_program_options-mt ../lib/liboptflow.so -Wl,-rpath,/home/nordlikg/fmi/test_interpolation16-bit/optflow/build/lib: 

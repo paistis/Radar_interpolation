@@ -1,0 +1,20 @@
+<PAMDataset>
+  <Metadata>
+    <MDI key="ALT">59</MDI>
+    <MDI key="DATETIME">20100808</MDI>
+    <MDI key="ELEV">1.48869289224</MDI>
+    <MDI key="LAT">60.3880601004</MDI>
+    <MDI key="LON">25.1138899662</MDI>
+    <MDI key="RADAR">['Kerava, radar     \x94O\xf1*\x1a\xd8\xdb\x110']</MDI>
+    <MDI key="VARIABLE">Z2</MDI>
+    <MDI key="VOL_NAME">test</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">1052</MDI>
+      <MDI key="STATISTICS_MEAN">1010.2024912497</MDI>
+      <MDI key="STATISTICS_MINIMUM">971</MDI>
+      <MDI key="STATISTICS_STDDEV">14.248654707555</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>

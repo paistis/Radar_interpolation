@@ -1,0 +1,18 @@
+[van1_int R] = geotiffread('20008081640_van_sweep1_50min-morph-26.tiff');
+[van1 R] = geotiffread('VAN_Z2_sweep1.tiff');
+
+C = van1+van1_int;
+
+van1 = C-van1_int;
+van1_int = C-van1;
+
+%van1(isnan(van1)) = [];
+%van1_int(isnan(van1_int)) = [];
+
+max_val = max([max(van1_int(:)) max(van1(:))]); %for nomalizatio
+
+%van1_int = van1_int./max_val;
+%van1 = van1./max_val;
+
+tmp = (van1_int-van1).*(van1_int-van1);
+nansum(tmp(:))./numel(van1(isfinite(van1)))

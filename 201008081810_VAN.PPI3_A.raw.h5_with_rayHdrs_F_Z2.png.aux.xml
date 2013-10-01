@@ -1,0 +1,15 @@
+<PAMDataset>
+  <SRS>PROJCS["unnamed",GEOGCS["WGS 84",DATUM["unknown",SPHEROID["WGS84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Azimuthal_Equidistant"],PARAMETER["latitude_of_center",60.27042998],PARAMETER["longitude_of_center",24.8722200841],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]]]</SRS>
+  <GeoTransform> -2.4989900000000000e+05,  5.0000000000000000e+02,  0.0000000000000000e+00,  2.4989900000000000e+05,  0.0000000000000000e+00, -5.0000000000000000e+02</GeoTransform>
+  <Metadata>
+    <MDI key="ALT">83.0</MDI>
+    <MDI key="AREA_OR_POINT">Area</MDI>
+    <MDI key="DATETIME">20100808181053</MDI>
+    <MDI key="ELEV">0.302133243812</MDI>
+    <MDI key="LAT">60.27042998</MDI>
+    <MDI key="LON">24.8722200841</MDI>
+    <MDI key="RADAR">['VANTAA            \x9e\xe5\xdb*x\xd9\xaf\x112']</MDI>
+    <MDI key="VARIABLE">Z2</MDI>
+    <MDI key="VOL_NAME">test</MDI>
+  </Metadata>
+</PAMDataset>
