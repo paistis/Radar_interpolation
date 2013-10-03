@@ -1,8 +1,8 @@
+import sys, os, time
+sys.path.append( os.getcwd() + '/lib')
+
 import radarlib as radar
 import hdf5lib as hdf5
-
-import sys, os, time
-
 from scipy import misc
 import numpy
 import scipy.io

@@ -15,6 +15,6 @@ gdal_translate -of PNG -ot UInt16 $1 $2
 #check what is next power of 2
 p2=`convert $2 -format "%[fx:2^(ceil(log(max(w,h))/log(2)))]" info:`
 #scale image to next power of 2
-convert $2 -background black -gravity center -extent ${p2}x${p2} $2
+convert $2 -background black -gravity center -extent ${p2}x${p2} $2 > /dev/null
 echo "re-size image"
 

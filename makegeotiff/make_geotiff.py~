@@ -23,11 +23,11 @@ def main():
 	#read Z2 data from refrence hdf5 file
 	isweep = 1
 	var = os.environ['MEASURMENT_VAR'] #get measurmetn varible, set in interpolate.sh
-	dtime="20100808"
+	
 	#open original hdf5 file for 
-	ppi = hdf5.HDF5scan(ifile,isweep,var,dtime)	
+	ppi = hdf5.HDF5scan(ifile,isweep,var)	
 	rcells = int(ppi.dist/ppi.rangestep)
-
+	dtime=ppi.dtime
 	lbm = np.zeros( (361., rcells) )
 
 	lbm[:,:] = -999
