@@ -34,6 +34,7 @@ fi
 
 file_1="${1%.*}"
 file_2="${2%.*}"
+file_2="${2%.*}"
 echo "file 1 to operate $file_1"
 echo "file 2 to operate $file_2"
 timesteps=$3
