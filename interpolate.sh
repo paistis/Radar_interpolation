@@ -16,41 +16,44 @@
 #interpolated images, in png and geotiff formats
 #Motion vector fields if optional arguments are not used.
 #png images of file1 and file2
-
-
-EXPECTED_ARGS=6
-E_BADARGS=65
+echo "using config file " $1
+. $1 #include variables from config file
+EXPECTED_ARGS=0
 
 #Check all arguments
 
 if [ $# -lt $EXPECTED_ARGS ]
 then
-  echo "Usage: `basename $0` [filename1] [filename2] [timesteps] [sweep] [var] [site]"
-  echo "Usage: `basename $0` [filename1] [filename2] [timesteps] [sweep] [var] [site] [vector field 1] [vector field 2]"
+  echo "Usage: `basename $0` [config file]"
   echo "var: Z2,KDP2,RHOHV2"
   exit $E_BADARGS
 fi
-#extract filenames from arguments
 
-file_1=$(basename $1)
-file_2=$(basename $2)
+#check if output directories exist if not create them
+if [ ! -d "$morp_output" ]; then
+	echo "morph directory does not exist.."
+	mkdir "$morp_output"
+fi
+
+if [ ! -d "$images" ]; then
+	echo "image directory does not exist..."
+	mkdir "$images"
+fi
+
+#extract filenames from config files
+file_1=$(basename $file1)
+file_2=$(basename $file2)
 echo "file_2" $file_2
 
-#file_1="${1%.*}"
-#file_2="${2%.*}"
 
-
-#image folder for output
-images="images/"
 export IMAGE_FOLDER=$images
-morp_output="morp" #output forder for interpolated images
 
 echo "file 1 to operate $file_1"
 echo "file 2 to operate $file_2"
-timesteps=$3
-var=$5
-sweep=$4
-site=$6
+#timesteps=$3
+#var=$5
+#sweep=$4
+#site=$6
 #output files are name with ploted variable 16bit
 #ofile1=$file_1"_"$var".tiff"
 #ofile2=$file_2"_"$var".tiff"
@@ -77,8 +80,8 @@ echo "hdf5 to geotiff"
 #hdf5 to geotiff
 
 #make 16bit images from hdf5 files 
-python hdf52geotiff/iris_ppi2.py $1 $sweep $var $dtime $ofile1 > /dev/null
-python hdf52geotiff/iris_ppi2.py $2 $sweep $var $dtime $ofile2 > /dev/null
+python hdf52geotiff/iris_ppi2.py $file1 $sweep $var $dtime $ofile1 > /dev/null
+python hdf52geotiff/iris_ppi2.py $file2 $sweep $var $dtime $ofile2 > /dev/null
 
 #resize to next power of 2 and convert to png
 #16bit images
@@ -105,7 +108,7 @@ convert_resize/convert_resize_8bit.sh $images$ofile2_8bit $images$ofile2_8bit_pn
 
 #use morph4 program to just calculate motion vectors from 8bit images if motion field need to be calculated
 prefix_motion="motion"
-if [ $# -eq 6 ]
+if [ [-z "$vec1"]]
 then
 	echo "calculate motion filed"
 	./optflow_8bit/build/bin/morph --image1 $images$ofile1_8bit_png --image2 $images$ofile2_8bit_png --numtimesteps $timesteps --algorithm proesmans --outprefix $prefix_motion > /dev/null
@@ -114,13 +117,13 @@ fi
 echo "Using morph program"
 #use optflow morph program for interpolation morph2 saves motion fields morph3 use these
 prefix=$site"_"$dtime
-if [ $# -eq 6 ]
+if [ [-z "$vec1"]]
 then
 #this is used when external vector field is generated from Z2 variable. This also saves motion vields
 	./optflow/build/bin/morph3 --image1 $images$ofile1_png --image2 $images$ofile2_png --numtimesteps $timesteps --algorithm proesmans --outprefix $prefix --vec1 motion-motion1.pdvm --vec2 motion-motion2.pdvm > /dev/null
 fi
 
-if [ $# -eq 8 ]
+if [ [ -n "$vec1"]]
 then
 #this use external vector field for calculating motion
 	vec1=$7
@@ -132,10 +135,10 @@ echo "Makeing geotiff images"
 #make geotiff from interpolated images based on coordinates from hdf5 files, This script use enviromental variable for calculation
 # this line: export MEASURMENT_VAR=$var
 echo $prefix"-morph-*.png"
-./makegeotiff/convert2geotiff.sh $prefix"-morph-*.png" $1
+./makegeotiff/convert2geotiff.sh $prefix"-morph-*.png" $file1
 
 echo "Cleaning"
-mv *.tiff morph/
+mv *.tiff $morp_output
 rm $prefix*
 
 
