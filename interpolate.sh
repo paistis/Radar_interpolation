@@ -40,6 +40,12 @@ if [ ! -d "$images" ]; then
 	mkdir "$images"
 fi
 
+if [ ! -d "$motion" ]; then
+        echo "motion directory does not exist..."
+        mkdir "$motion"
+fi
+
+
 #extract filenames from config files
 file_1=$(basename $file1)
 file_2=$(basename $file2)
@@ -108,7 +114,7 @@ convert_resize/convert_resize_8bit.sh $images$ofile2_8bit $images$ofile2_8bit_pn
 
 #use morph4 program to just calculate motion vectors from 8bit images if motion field need to be calculated
 prefix_motion="motion"
-if [ [-z "$vec1"]]
+if [ -z "$vec1"];
 then
 	echo "calculate motion filed"
 	./optflow_8bit/build/bin/morph --image1 $images$ofile1_8bit_png --image2 $images$ofile2_8bit_png --numtimesteps $timesteps --algorithm proesmans --outprefix $prefix_motion > /dev/null
@@ -117,13 +123,14 @@ fi
 echo "Using morph program"
 #use optflow morph program for interpolation morph2 saves motion fields morph3 use these
 prefix=$site"_"$dtime
-if [ [-z "$vec1"]]
+echo $prefix
+if [ -z "$vec1"];
 then
 #this is used when external vector field is generated from Z2 variable. This also saves motion vields
 	./optflow/build/bin/morph3 --image1 $images$ofile1_png --image2 $images$ofile2_png --numtimesteps $timesteps --algorithm proesmans --outprefix $prefix --vec1 motion-motion1.pdvm --vec2 motion-motion2.pdvm > /dev/null
 fi
 
-if [ [ -n "$vec1"]]
+if [ -n "$vec1"];
 then
 #this use external vector field for calculating motion
 	vec1=$7
