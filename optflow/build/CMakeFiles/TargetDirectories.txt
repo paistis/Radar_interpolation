@@ -1,7 +1,0 @@
-/home/nordlikg/fmi/test_interpolation16-bit/optflow/build/bin/CMakeFiles/extractmotion.dir
-/home/nordlikg/fmi/test_interpolation16-bit/optflow/build/bin/CMakeFiles/extrapolate.dir
-/home/nordlikg/fmi/test_interpolation16-bit/optflow/build/bin/CMakeFiles/morph.dir
-/home/nordlikg/fmi/test_interpolation16-bit/optflow/build/bin/CMakeFiles/morph2.dir
-/home/nordlikg/fmi/test_interpolation16-bit/optflow/build/bin/CMakeFiles/morph3.dir
-/home/nordlikg/fmi/test_interpolation16-bit/optflow/build/bin/CMakeFiles/morph4.dir
-/home/nordlikg/fmi/test_interpolation16-bit/optflow/build/lib/CMakeFiles/optflow.dir
