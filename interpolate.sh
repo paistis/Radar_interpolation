@@ -113,7 +113,8 @@ convert_resize/convert_resize_8bit.sh $images$ofile1_8bit $images$ofile1_8bit_pn
 convert_resize/convert_resize_8bit.sh $images$ofile2_8bit $images$ofile2_8bit_png > /dev/null
 
 #use morph4 program to just calculate motion vectors from 8bit images if motion field need to be calculated
-prefix_motion="motion"
+prefix_motion="motion_vector_"$site
+echo $prefix_motion
 if [ -z "$vec1"];
 then
 	echo "calculate motion filed"
@@ -127,7 +128,11 @@ echo $prefix
 if [ -z "$vec1"];
 then
 #this is used when external vector field is generated from Z2 variable. This also saves motion vields
-	./optflow/build/bin/morph3 --image1 $images$ofile1_png --image2 $images$ofile2_png --numtimesteps $timesteps --algorithm proesmans --outprefix $prefix --vec1 motion-motion1.pdvm --vec2 motion-motion2.pdvm > /dev/null
+echo $images$ofile1_png
+echo $images$ofile2_png
+echo $prefix_motion"motion1.pdvm"
+echo $prefix
+	./optflow/build/bin/morph3 --image1 $images$ofile1_png --image2 $images$ofile2_png --numtimesteps $timesteps --algorithm proesmans --outprefix $prefix --vec1 $prefix_motion"-motion1.pdvm" --vec2 $prefix_motion"-motion2.pdvm" > /dev/null
 fi
 
 if [ -n "$vec1"];
@@ -138,7 +143,7 @@ then
 	./optflow/build/bin/morph3 --image1 $images$ofile1_png --image2 $images$ofile2_png --numtimesteps $timesteps --algorithm proesmans --outprefix $prefix --vec1 $vec1 --vec2 $vec2 > /dev/null
 fi
 
-echo "Makeing geotiff images"
+echo "Making geotiff images"
 #make geotiff from interpolated images based on coordinates from hdf5 files, This script use enviromental variable for calculation
 # this line: export MEASURMENT_VAR=$var
 echo $prefix"-morph-*.png"
@@ -146,6 +151,7 @@ echo $prefix"-morph-*.png"
 
 echo "Cleaning"
 mv *.tiff $morp_output
+mv motion_vector* motion/
 rm $prefix*
 
 
