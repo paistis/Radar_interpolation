@@ -1,4 +1,4 @@
-/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/build/bin/CMakeFiles/extractmotion.dir
-/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/build/bin/CMakeFiles/extrapolate.dir
-/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/build/bin/CMakeFiles/morph.dir
-/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/build/lib/CMakeFiles/optflow.dir
+/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/build/bin/CMakeFiles/extractmotion.dir
+/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/build/bin/CMakeFiles/extrapolate.dir
+/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/build/bin/CMakeFiles/morph.dir
+/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/build/lib/CMakeFiles/optflow.dir

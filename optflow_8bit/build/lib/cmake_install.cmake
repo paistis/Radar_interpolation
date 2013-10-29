@@ -1,4 +1,4 @@
-# Install script for directory: /home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib
+# Install script for directory: /home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/liboptflow.so"
          RPATH "")
   ENDIF()
-  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/build/lib/liboptflow.so")
+  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/build/lib/liboptflow.so")
   IF(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/liboptflow.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/liboptflow.so")
     IF(CMAKE_INSTALL_DO_STRIP)
@@ -50,31 +50,31 @@ ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unsp
 
 IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/optflow" TYPE FILE FILES
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/DenseImageExtrapolator.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/DenseImageMorpher.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/DenseMotionExtractor.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/DenseVectorFieldIO.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/DualDenseMotionExtractor.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/ForwardDenseImageExtrapolator.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/ImageExtrapolatorDriver.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/ImagePyramid.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/InverseDenseImageExtrapolator.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/LucasKanade.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/LucasKanadeOpenCV.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/LucasKanadeROI.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/MotionExtractorDriver.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/Proesmans.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/PXMFileUtils.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/PyramidalDenseMotionExtractor.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/PyramidalLucasKanade.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/PyramidalProesmans.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/ROI.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/SparseImageExtrapolator.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/SparseImageMorpher.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/SparseMotionExtractor.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/SparseVectorField.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/SparseVectorFieldIO.h"
-    "/home/nordlikg/fmi/test_interpolation16-bit/optflow_8bit/lib/VectorFieldIllustrator.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/DenseImageExtrapolator.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/DenseImageMorpher.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/DenseMotionExtractor.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/DenseVectorFieldIO.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/DualDenseMotionExtractor.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/ForwardDenseImageExtrapolator.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/ImageExtrapolatorDriver.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/ImagePyramid.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/InverseDenseImageExtrapolator.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/LucasKanade.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/LucasKanadeOpenCV.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/LucasKanadeROI.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/MotionExtractorDriver.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/Proesmans.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/PXMFileUtils.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/PyramidalDenseMotionExtractor.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/PyramidalLucasKanade.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/PyramidalProesmans.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/ROI.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/SparseImageExtrapolator.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/SparseImageMorpher.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/SparseMotionExtractor.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/SparseVectorField.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/SparseVectorFieldIO.h"
+    "/home/nordlikg/Documents/Radar_interpolation/optflow_8bit/lib/VectorFieldIllustrator.h"
     )
 ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 

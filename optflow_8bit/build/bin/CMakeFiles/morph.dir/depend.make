@@ -5,6 +5,7 @@ bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/CImg.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/CImg_config.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/DenseImageMorpher.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/DenseMotionExtractor.h
+bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/DenseVectorFieldIO.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/DualDenseMotionExtractor.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/ImagePyramid.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/LucasKanadeOpenCV.h
@@ -14,7 +15,6 @@ bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/PyramidalProesmans.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/SparseImageMorpher.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/SparseMotionExtractor.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/SparseVectorField.h
-bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/SparseVectorFieldIO.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/VectorFieldIllustrator.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/../lib/version.h
 bin/CMakeFiles/morph.dir/morph.cpp.o: ../bin/morph.cpp

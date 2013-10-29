@@ -26,6 +26,8 @@ path = os.getcwd()
 radar1 = pyart.io.read_rsl(RADAR_FILE1)
 radar2 = pyart.io.read_rsl(RADAR_FILE2)
 
+print "Reading radar files"
+
 dist = radar1.range['data'][-1]
 rcells = radar1.ngates
 # mask out last 10 gates of each ray, this removed the "ring" around th radar.
@@ -34,29 +36,35 @@ radar2.fields['reflectivity_horizontal']['data'][:, -10:] = np.ma.masked
 
 
 # perform Cartesian mapping, limit to the reflectivity field.
-
+#grid1 = pyart.io.grid.read_grid("test_grid1.nfc")
+#grid2 = pyart.io.grid.read_grid("test_grid2.nfc")
+print "griding first file..."
 grid1 = pyart.map.grid_from_radars(
     (radar1,),
     grid_shape=(rcells*2, rcells*2, 5),
     grid_limits=((dist, -dist), (dist, -dist),
                  (10, 10)),
     fields=interpolated_variables)
+print "saving grid one"
 grid1.write(filename+"_grid1.nfc")
 
+print "griding second file..."
 grid2 = pyart.map.grid_from_radars(
     (radar2,),
     grid_shape=(rcells*2, rcells*2, 5),
     grid_limits=((dist, -dist), (dist, -dist),
                  (10, 10)),
     fields=interpolated_variables)
+print "saving second grid.."
 grid1.write(filename+"_grid2.nfc")
 
-grid1.write(images+RADAR_FILE1+"tiff",'GTiff')
-grid2.write(images+RADAR_FILE2+"tiff",'GTiff')
+grid1.write(images+RADAR_FILE1+".tiff",'GTiff')
+grid2.write(images+RADAR_FILE2+".tiff",'GTiff')
 
 
 #at this point we have start and end images for the interpolation
 #step 1. make grayscale images: 8-bit for calculating motion field, 16-bit for interpolation (output formats are png) and size is next power of 2
+print "converting pictures..."
 image1 = images+RADAR_FILE1  +"_"+movement_variable+".tiff"
 image2 = images+RADAR_FILE2 +"_"+movement_variable+".tiff"
 image1_png = images+RADAR_FILE1 +"_"+movement_variable+"_8bit"+".png"
@@ -74,14 +82,15 @@ for i in interpolated_variables:
 
 
 #step 2. calculate motion vectors from movement_variable
-
+print "calculating motion..."
 args = path+"/optflow_8bit/build/bin/morph --image1 "+image1_png+" --image2 "+image2_png+" --numtimesteps "+str(timesteps)+" --algorithm proesmans --outprefix "+filename+"_motion"
 os.system(args)
 
 #step 2. interploate all interpolation variables using 16-bit optical flow algorithm
-
+print "interploating"
 path = os.getcwd()
 for i in interpolated_variables:
+	print "interpolating" + str(i) 
 	image1 = images+RADAR_FILE1 +i+".png"
 	image2 = images+RADAR_FILE2 +i+".png"
 	vec1 = filename+"_motion-motion1.pdvm"
@@ -90,6 +99,7 @@ for i in interpolated_variables:
 	args=path+"/optflow/build/bin/morph3 --image1 " +image1+" --image2 "+image2+" --numtimesteps "+str(timesteps)+ " --algorithm proesmans --outprefix " + filename+"_"+i + " --vec1 "+vec1+" --vec2 "+ vec2
 	os.system(args)
 
+print "making geotiffs"
 #step 3 make geotiff's from interpolated images
 for i in interpolated_variables:
 	ifiles = glob.glob('*reflectivity_horizonta*.png')
