@@ -9,11 +9,14 @@ import gdal,cmath
 import numpy as np
 import matplotlib.pyplot as plt
 import Image
-
+import pyart
+import cmath, math
 
 # MAIN
 
 def geotiff2png(ifile,var,ofile,bit8=False):
+	if var=='DBZ2':
+		var = 'reflectivity_horizontal'
 	print "ifile: " + ifile
 	print "ofile: " + ofile
 	if os.path.exists(ifile):
@@ -77,7 +80,8 @@ def png2geotiff(ifile,var,ofile,grid):
     	Img = misc.imread(ifile)
     	arr = np.asarray(Img)
 	lbm2=Img
-
+	if var=='DBZ2':
+		var = 'reflectivity_horizontal'
 	if (var =='reflectivity_horizontal'):
 		#lbm2[lbm2 >= 65534] = nan
 		#lbm2[lbm2 <= 1] = nan
@@ -120,5 +124,48 @@ def png2geotiff(ifile,var,ofile,grid):
 	iproj = 'PROJCS["unnamed",GEOGCS["WGS 84",DATUM["unknown",SPHEROID["WGS84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Azimuthal_Equidistant"],PARAMETER["latitude_of_center",'+str(lat)+'],PARAMETER["longitude_of_center",'+str(lon)+'],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]]]'
 	dst_ds.SetProjection(iproj)
 
-    	dst_ds.GetRasterBand(1).WriteArray( lbm3)	    
+    	dst_ds.GetRasterBand(1).WriteArray( lbm3)
+
+def getCartesian(indata ):
+
+	(dimy, dimx) = indata.shape
+
+        pcart = zeros( (2 * dimx, 2 * dimx) )
+        pcart[:,:] = nan
+
+        for x in range(-dimx, dimx):
+        	for y in range(-dimx, dimx):
+
+            		z = complex(x + 0.5, y + 0.5)
+
+            		p = cmath.polar(z)
+
+            		if p[0] < dimx:
+                  		pcart[x + dimx,y + dimx] = indata[int(180. / pi * p[1] * dimy / 360.),int(p[0])]
+	return pcart
+
+def radarDisplay2geotiff(radar,display,ofile,field,tilt):	
+
+	#test
+	data = display._get_data(field, tilt, None)
+        x, y = display._get_x_y(field, tilt)
+    	#ax = plt.gca()
+	#pm = ax.pcolormesh(x,y,data)
+	#plt.show()	
+	data = getCartesian(data)
+
+	dist = radar.range['data'][-1]
+	rcells = radar.ngates
+	rangestep = radar.range['data'][1] - radar.range['data'][0]
+
+    	lat = radar.latitude
+	lon = radar.longitude
+
+	out_driver = gdal.GetDriverByName("GTiff")
+	dst_options = ['COMPRESS=LZW','ALPHA=YES']
+	dst_ds = out_driver.Create(ofile, int(2*rcells), int(2*rcells), 1, gdal.GDT_Float32, dst_options)
+	dst_ds.SetGeoTransform( [ dist, -rangestep, 0, -dist, 0, rangestep ] )
+	iproj = 'PROJCS["unnamed",GEOGCS["WGS 84",DATUM["unknown",SPHEROID["WGS84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Azimuthal_Equidistant"],PARAMETER["latitude_of_center",'+str(lat)+'],PARAMETER["longitude_of_center",'+str(lon)+'],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]]]'
+	dst_ds.SetProjection(iproj)
+    	dst_ds.GetRasterBand(1).WriteArray( data[:,::-1] )
 
