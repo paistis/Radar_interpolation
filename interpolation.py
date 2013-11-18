@@ -10,57 +10,123 @@ import pyart
 import geotiff2png
 import subprocess
 import glob
+import matplotlib.pyplot as plt
+
+
+def get_sweep(radar,field,sweep):
+	starts = radar.sweep_start_ray_index['data']
+        ends = radar.sweep_end_ray_index['data']
+        start = starts[sweep]
+        end = ends[sweep] + 1
+        data = radar.fields[field]['data'][start:end]
+	radar.fields[field]['data'] = data
+	print data.shape
+	radar.azimuth['data'] = radar.azimuth['data'][start:end]
+	radar.elevation['data'] = radar.elevation['data'][start:end]
+	#radar.range['data'] = radar.range['data'][start:end]
+
+#definitions for mask from HCLASS
+rain=2
+wet_snow=3
+snow=4
+graupel=5
+hail=6
 
 # Variables
 RADAR_FILE1 = '201008081800_VAN.PPI1_A.raw'
-RADAR_FILE2 = '201008081805_VAN.PPI2_A.raw'
-movement_variable = 'reflectivity_horizontal'
-interpolated_variables = ['reflectivity_horizontal']
+RADAR_FILE2 = '201008081820_VAN.PPI2_A.raw'
+movement_variable = 'DBZ2'
+interpolated_variables = ['DBZ2','HCLASS2']
+mask=rain
 timesteps = 10
-images = "images/"
-morph = "morp/"
+images = "images2/"
+morph = "morp2/"
 filename="test"
 path = os.getcwd()
+sweep=0
+treshold=0.3
 
-#Read radar data 
-radar1 = pyart.io.read_rsl(RADAR_FILE1)
-radar2 = pyart.io.read_rsl(RADAR_FILE2)
-
+#Read radar data
 print "Reading radar files"
+radar1 = pyart.io.read_sigmet(RADAR_FILE1,sigmet_field_names=True, time_ordered='none')
+radar2 = pyart.io.read_sigmet(RADAR_FILE2,sigmet_field_names=True, time_ordered='none')
 
-dist = radar1.range['data'][-1]
-rcells = radar1.ngates
 # mask out last 10 gates of each ray, this removed the "ring" around th radar.
-radar1.fields['reflectivity_horizontal']['data'][:, -10:] = np.ma.masked
-radar2.fields['reflectivity_horizontal']['data'][:, -10:] = np.ma.masked
+#radar1.fields['DBZ2']['data'][:, -10:] = np.ma.masked
+#radar2.fields['DBZ2']['data'][:, -10:] = np.ma.masked
 
+#get sweep
+"""
+print "geting sweep"
+for field, field_dic in radar1.fields.iteritems():
+	get_sweep(radar1,field,sweep)
+	get_sweep(radar2,field,sweep)
+"""
+#saving non masked data
+display = pyart.graph.RadarDisplay(radar1)
+for field, field_dic in radar1.fields.iteritems():
+	geotiff2png.radarDisplay2geotiff(radar1,display,field+".tiff",field,0)
+
+#data quality control
+print "masking radar data"
 
 # perform Cartesian mapping, limit to the reflectivity field.
 #grid1 = pyart.io.grid.read_grid("test_grid1.nfc")
 #grid2 = pyart.io.grid.read_grid("test_grid2.nfc")
+
 print "griding first file..."
+dist = radar1.range['data'][-1]
+rcells = radar1.ngates
+
 grid1 = pyart.map.grid_from_radars(
     (radar1,),
-    grid_shape=(rcells*2, rcells*2, 5),
+    grid_shape=(rcells, rcells, 3),
     grid_limits=((dist, -dist), (dist, -dist),
                  (10, 10)),
-    fields=interpolated_variables)
+    fields=interpolated_variables,leafsize = 50)
 print "saving grid one"
 grid1.write(filename+"_grid1.nfc")
 
 print "griding second file..."
 grid2 = pyart.map.grid_from_radars(
     (radar2,),
-    grid_shape=(rcells*2, rcells*2, 5),
+    grid_shape=(rcells, rcells, 3),
     grid_limits=((dist, -dist), (dist, -dist),
                  (10, 10)),
-    fields=interpolated_variables)
+    fields=interpolated_variables,leafsize = 50)
 print "saving second grid.."
-grid1.write(filename+"_grid2.nfc")
+grid2.write(filename+"_grid2.nfc")
 
+#data Quality control
+"""
+grid1.write(images+RADAR_FILE1+"nonmasked.tiff",'GTiff')
+grid2.write(images+RADAR_FILE2+"nonnmasked.tiff",'GTiff')
+
+print "masking radar data"
+
+#mask for first grid
+mask_ =  grid1.fields['HCLASS2']['data']
+mask_[mask_.mask] = nan
+mask_ = mask_.data
+mask_[(mask+treshold) > mask_] = nan
+mask_[(mask-treshold) < mask_] = nan
+mask_[np.isfinite(mask_)] = 1
+
+#mask for second grid
+mask_2 =  grid2.fields['HCLASS2']['data']
+mask_2[mask_2.mask] = nan
+mask_2 = mask_2.data
+mask_2[(mask+treshold) > mask_2] = nan
+mask_2[(mask-treshold) < mask_2] = nan
+mask_2[np.isfinite(mask_2)] = 1
+
+for field in interpolated_variables:
+	if (field != "ROI"):# and (field != "HCLASS2"):		
+		grid1.fields[field]['data'] = np.ma.MaskedArray(grid1.fields[field]['data'].data*mask_,grid1.fields[field]['data'].mask)
+		grid2.fields[field]['data'] = np.ma.MaskedArray(grid2.fields[field]['data'].data*mask_2,grid2.fields[field]['data'].mask)
+"""
 grid1.write(images+RADAR_FILE1+".tiff",'GTiff')
 grid2.write(images+RADAR_FILE2+".tiff",'GTiff')
-
 
 #at this point we have start and end images for the interpolation
 #step 1. make grayscale images: 8-bit for calculating motion field, 16-bit for interpolation (output formats are png) and size is next power of 2
@@ -102,7 +168,7 @@ for i in interpolated_variables:
 print "making geotiffs"
 #step 3 make geotiff's from interpolated images
 for i in interpolated_variables:
-	ifiles = glob.glob('*reflectivity_horizonta*.png')
+	ifiles = glob.glob('*'+i+'*.png')
 	for ifile in ifiles:
 		ofile, ext = os.path.splitext(ifile)
 		ofile = path+"/"+morph+ofile + ".tiff"
