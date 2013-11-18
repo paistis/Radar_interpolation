@@ -22,3 +22,11 @@ morp_output="morp/" #output forder for interpolated images
 #these are optional, and theses sould not be defined if they are not used
 vec1="motion1.pvdm"
 vec2="motion2.pvdm"
+
+Python version:
+using python interpolation.py
+filenames defined inside python file, fullpaths are not supported yet
+
+Install new version of pyart in pyart folded. run python setup.py install --user
+
+
