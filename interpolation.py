@@ -31,7 +31,7 @@ wet_snow=3
 snow=4
 graupel=5
 hail=6
-def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timestep,images,morh,filename,interpolated_variables = ['DBZ2','HCLASS2']):
+def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filename,interpolated_variables = ['DBZ2','HCLASS2']):
 	# Variables
 	RADAR="VAN"
 	#RADAR_FILE1_path = "/home/nordlikg/Documents/data/RAW/VAN/2010-07-15/201007151155_VAN.PPI3_B.raw" #'201008081800_VAN.PPI1_A.raw'
