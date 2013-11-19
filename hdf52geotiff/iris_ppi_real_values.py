@@ -66,9 +66,16 @@ if os.path.exists(ifile):
 
     lbm[lbm == -999] = nan
     mask[mask == -999] = nan
-
+    masked=radar.filler_filter(mask)
+    np.savetxt('Hclassi_r.txt',mask)
+    np.savetxt('Hclassi_filled_r.txt',masked)
     ilbm = rcoord.getCartesian(lbm)
+    mask = rcoord.getCartesian(masked)
+    np.savetxt('Hclass_mask_cartessian.txt',mask)
+
     print ilbm
+
+
     #clean mask data
     #mask[mask >= 95.5] = nan
     #mask[maks < -31.5] = nan
@@ -77,10 +84,13 @@ if os.path.exists(ifile):
     #convert values from 16-bit to real values
     ilbm = np.asarray(ilbm)
 
+    np.savetxt('Datai_r.txt',ilbm)
+    ilbm=ilbm*mask
+    np.savetxt('Data_filter.txt',ilbm)
    
 	
     asp = 1.0
-    np.savetxt('dump_Data.txt',ilbm)
+#    np.savetxt('dump_Data.txt',ilbm)
     cmap = cm.get_cmap('jet', 256)
 
     norm = cm.colors.Normalize(vmin=nanmin(ilbm[:,:]), vmax=nanmax(ilbm[:,:]))

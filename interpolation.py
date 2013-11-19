@@ -12,6 +12,120 @@ import subprocess
 import glob
 import matplotlib.pyplot as plt
 
+#Filter definitions for data quality and functions
+#Use the filler filter
+def median_filter(Data):
+        """Use median filtering to create or modify a filtering mask.
+    
+    Input:
+    Data -- data array or a boolean filtering mask
+    
+    Return a boolean filtering array, where True = meteorological value, 
+    False = non-meteorological value.
+    """
+    # Check for type
+        if Data.dtype != 'bool':
+                hcmask = Data > 1
+        else:
+                hcmask = Data
+
+        hcmaski = Image.fromarray(hcmask.astype('uint8'))
+        hcmaski = hcmaski.filter(ImageFilter.MedianFilter)
+        hcmask = asarray(hcmaski).astype('bool') # Boolean array
+        return hcmask
+
+def closing_filter(Data, size=3):
+        """Use grey closing to create or modify a filtering mask. 
+        
+        Input can be either unfiltered data or a filtering mask.
+    Data -- data array or a boolean filtering mask
+    Size -- Size of closing footprint (an integer). Closing footprint is
+            size*size square.
+        
+        Output is a filtering mask (= a boolean array, where True means
+        meteorological value)
+    """
+    # Check for type
+        if Data.dtype != 'bool':
+                hcmask = Data > 1
+        else:
+                hcmask = Data
+        footprint = ones((size, size))
+        hcmaski = ndimage.grey_closing(hcmask, footprint=footprint, mode='constant')
+        return hcmaski # Boolean array
+
+def filler_filter(Data, nonmet=1):
+        """Create a filtering mask for dBZ field from hydroclass information
+        field.
+        
+        Mask is created by removing non-meteorological objects and filling
+        resulting holes. Hydroclass information field remains unmodified.
+        
+        Input:
+        Data -- Hydroclass information field in numpy.ndarray
+        nonmet -- value of non-meteorological objects. Function assumes that
+                          this value is the smallest positive (non-zero) value of
+                          the classification values.
+        
+        Return a boolean filtering mask, where values True corresponds to 
+        meteorological object and False to non-meteorological object.
+        """
+        im1 = zeros_like(Data)
+        im1[Data==nonmet] = 2 # Non-meteorological objects
+        im1[Data>nonmet] = 1 # Meteorological objects
+#        savetxt('Hclass_nofilled.txt',im1) # speckle hydro_class
+
+        # Make a mask for removing non-mets from inside mets
+        im2 = zeros_like(im1)
+        im2[im1==1] = 1 # Meteorological objects
+        im2 = padder(im2) # Pad, fill and remove padding
+        im2 = imfill(im2,1)
+        im2 = rmpadder(im2)
+# Filtering
+        im3 = im1 - im2
+        im1[im3==1] = 1 # Meteorological objects
+        retim = im1 == 1 # Boolean array
+        del im1, im2, im3
+        return retim
+def padder(arr):
+        """Pad an array with zeros."""
+        r,c = arr.shape
+        dt  =  arr.dtype # To preserve array's dtype
+        rows = zeros((r,1),dt)
+        cols = zeros((1,c+2),dt)
+        rowpad = hstack((rows,arr,rows))
+        colpad = vstack((cols,rowpad,cols))
+        return colpad
+
+def rmpadder(padded):
+        """Remove padding created by padder."""
+        r,c = padded.shape
+        r = r-1
+        c = c-1
+        padded = padded[1:r, 1:c] # Don't take the paddings into account anymore
+        return padded
+
+def imfill(arr, edge):
+    """Fill holes in images.
+    
+    NOTE: dtype of input array will be temporarily converted uint8!
+    This is because PIL's fromarray function works only with numpy
+    arrays of data type 'uint8'. This may cause some data losses, so 
+    proceed with caution!
+    
+    Input:
+    arr -- a numpy.array to be floodfilled
+    edge -- a value of edges
+    """
+    # using arr.astype to preserve array's dtype, as fromarray requires
+    # array whose dtype is uint8
+    img = Image.fromarray(arr.astype('uint8')) # read-only
+    aimg = img.copy()
+    ImageDraw.floodfill(aimg, (0,0), edge, edge)
+    invimg = ImageChops.invert(aimg)
+    invarr = asarray(invimg)
+    arr[invarr==255] = edge
+    return arr
 
 def get_sweep(radar,field,sweep):
 	starts = radar.sweep_start_ray_index['data']
@@ -33,13 +147,13 @@ graupel=5
 hail=6
 def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timestep,images,morh,filename,interpolated_variables = ['DBZ2','HCLASS2']):
 	# Variables
-	RADAR="VAN"
-	#RADAR_FILE1_path = "/home/nordlikg/Documents/data/RAW/VAN/2010-07-15/201007151155_VAN.PPI3_B.raw" #'201008081800_VAN.PPI1_A.raw'
-	#RADAR_FILE2_path = "/home/nordlikg/Documents/data/RAW/VAN/2010-07-15/201007151215_VAN.PPI1_B.raw"#'201008081820_VAN.PPI2_A.raw'
+	#RADAR="VAN"
+	#RADAR_FILE1_path = "/home/lrojas/Documents/Research/Urban_Rainfall/Data/RAW/VAN/2010-08-08/201008081800_VAN.PPI1_A.raw"
+	#RADAR_FILE2_path = "/home/lrojas/Documents/Research/Urban_Rainfall/Data/RAW/VAN/2010-08-08/201008081805_VAN.PPI2_A.raw"
 	RADAR_FILE1 = os.path.basename(RADAR_FILE1_path)
 	RADAR_FILE2 = os.path.basename(RADAR_FILE2_path)
 	movement_variable = 'DBZ2'
-	interpolated_variables = ['DBZ2','HCLASS2']
+	#interpolated_variables = ['DBZ2','HCLASS2']
 	mask=rain
 	#timesteps = 10
 	#images = "images2/"
@@ -109,7 +223,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timestep,images,morh,filename,
 		         (10, 10)),
 	    fields=interpolated_variables,leafsize = 50)
 	print "saving grid one"
-	grid1.write(filename+"_grid1.nfc")
+#	grid1.write(filename+"_grid1.nfc")
 
 	print "griding second file..."
 	grid2 = pyart.map.grid_from_radars(
@@ -119,7 +233,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timestep,images,morh,filename,
 		         (10, 10)),
 	    fields=interpolated_variables,leafsize = 50)
 	print "saving second grid.."
-	grid2.write(filename+"_grid2.nfc")
+#	grid2.write(filename+"_grid2.nfc")
 
 	#data Quality control
 

@@ -61,8 +61,11 @@ class HDF5scan:
          self.obsval = np.asarray(sweepd[ivar])
 	 self.obsval = self.obsval.astype(float)
 	 #Z2 variable is used for masking data
-         self.mask = np.asarray(sweepd["Z2"])
-	 self.mask = self.obsval.astype(float)
+         # self.mask = np.asarray(sweepd["Z2"])
+	 # self.mask = self.obsval.astype(float)
+         self.mask = np.asarray(sweepd["HCLASS2"])
+         #self.mask = self.obsval.astype(float)
+         #np.savetxt('mask_Hclass.txt',self.mask)
 	
          dataset = fd['/Ingest_header/task_configuration_header/task_Scan_Info_header']
 	

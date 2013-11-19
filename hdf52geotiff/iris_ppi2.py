@@ -54,9 +54,19 @@ def main(ifile,isweep,var,otfile,bit8=True):
 
 	    lbm[lbm == -999] = nan
 	    mask[mask == -999] = nan
-
+            masked=radar.filler_filter(mask)
+            masked1=radar.median_filter(mask)
+	    masked2=radar.closing_filter(mask)
+            np.savetxt('Hclass_filled.txt',masked)
+            np.savetxt('Hclass_median.txt',masked1)
+            np.savetxt('Hclass_closing.txt',masked2)
+            np.savetxt('Data.txt',lbm)
 	    ilbm = rcoord.getCartesian(lbm)
-	    mask = rcoord.getCartesian(mask)
+            np.savetxt('Data_rcoord.txt',lbm)
+	    mask = rcoord.getCartesian(masked)
+            h_class = rcoord.getCartesian(mask)
+            np.savetxt('Hclass_mask_rcood.txt',mask)
+            np.savetxt('Hclass_rcood.txt',h_class)
 	    ilbm_8bit = ilbm
 
 	    print "ilbm"
@@ -86,7 +96,11 @@ def main(ifile,isweep,var,otfile,bit8=True):
 		ilbm[ilbm <= 0] = nan
 		ilbm[ilbm >= 65535] = nan
 
-	    ilbm = np.asarray(ilbm)	
+	    ilbm = np.asarray(ilbm)
+ #           np.savetxt('Data.txt',ilbm)
+            ilbm=ilbm*mask
+           
+ #          np.savetxt('Data_filter.txt',ilbm)	
 
 	    #write Geotiff image 16bit
 	    otfile2 = "8bit_"+otfile
