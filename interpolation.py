@@ -33,6 +33,7 @@ graupel=5
 hail=6
 
 # Variables
+RADAR="VAN"
 RADAR_FILE1 = '201008081800_VAN.PPI1_A.raw'
 RADAR_FILE2 = '201008081820_VAN.PPI2_A.raw'
 movement_variable = 'DBZ2'
@@ -56,12 +57,12 @@ radar2 = pyart.io.read_sigmet(RADAR_FILE2,sigmet_field_names=True, time_ordered=
 #radar2.fields['DBZ2']['data'][:, -10:] = np.ma.masked
 
 #get sweep
-"""
+
 print "geting sweep"
 for field, field_dic in radar1.fields.iteritems():
 	get_sweep(radar1,field,sweep)
 	get_sweep(radar2,field,sweep)
-"""
+
 #saving non masked data
 display = pyart.graph.RadarDisplay(radar1)
 for field, field_dic in radar1.fields.iteritems():
@@ -69,6 +70,27 @@ for field, field_dic in radar1.fields.iteritems():
 
 #data quality control
 print "masking radar data"
+
+#mask for first grid
+mask_ =  radar1.fields['HCLASS2']['data']
+mask_[mask_.mask] = nan
+mask_ = mask_.data
+mask_[(mask+treshold) < mask_] = nan
+mask_[(mask-treshold) > mask_] = nan
+mask_[np.isfinite(mask_)] = 1
+
+#mask for second grid
+mask_2 =  radar2.fields['HCLASS2']['data']
+mask_2[mask_2.mask] = nan
+mask_2 = mask_2.data
+mask_2[(mask+treshold) < mask_2] = nan
+mask_2[(mask-treshold) > mask_2] = nan
+mask_2[np.isfinite(mask_2)] = 1
+
+for field in interpolated_variables:
+	if (field != "ROI"):# and (field != "HCLASS2"):		
+		radar1.fields[field]['data'] = np.ma.MaskedArray(radar1.fields[field]['data'].data*mask_,radar1.fields[field]['data'].mask)
+		radar2.fields[field]['data'] = np.ma.MaskedArray(radar2.fields[field]['data'].data*mask_2,radar2.fields[field]['data'].mask)
 
 # perform Cartesian mapping, limit to the reflectivity field.
 #grid1 = pyart.io.grid.read_grid("test_grid1.nfc")
@@ -98,33 +120,11 @@ print "saving second grid.."
 grid2.write(filename+"_grid2.nfc")
 
 #data Quality control
-"""
+
 grid1.write(images+RADAR_FILE1+"nonmasked.tiff",'GTiff')
 grid2.write(images+RADAR_FILE2+"nonnmasked.tiff",'GTiff')
 
-print "masking radar data"
 
-#mask for first grid
-mask_ =  grid1.fields['HCLASS2']['data']
-mask_[mask_.mask] = nan
-mask_ = mask_.data
-mask_[(mask+treshold) > mask_] = nan
-mask_[(mask-treshold) < mask_] = nan
-mask_[np.isfinite(mask_)] = 1
-
-#mask for second grid
-mask_2 =  grid2.fields['HCLASS2']['data']
-mask_2[mask_2.mask] = nan
-mask_2 = mask_2.data
-mask_2[(mask+treshold) > mask_2] = nan
-mask_2[(mask-treshold) < mask_2] = nan
-mask_2[np.isfinite(mask_2)] = 1
-
-for field in interpolated_variables:
-	if (field != "ROI"):# and (field != "HCLASS2"):		
-		grid1.fields[field]['data'] = np.ma.MaskedArray(grid1.fields[field]['data'].data*mask_,grid1.fields[field]['data'].mask)
-		grid2.fields[field]['data'] = np.ma.MaskedArray(grid2.fields[field]['data'].data*mask_2,grid2.fields[field]['data'].mask)
-"""
 grid1.write(images+RADAR_FILE1+".tiff",'GTiff')
 grid2.write(images+RADAR_FILE2+".tiff",'GTiff')
 
@@ -174,11 +174,4 @@ for i in interpolated_variables:
 		ofile = path+"/"+morph+ofile + ".tiff"
 		geotiff2png.png2geotiff(ifile,i,ofile,grid1)
 		os.remove(ifile)
-
-
-
-		
-
-
-
 
