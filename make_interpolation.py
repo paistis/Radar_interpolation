@@ -11,6 +11,7 @@ end_time=1900
 site="VAN"
 data_path = "/home/nordlikg/Documents/data/RAW/VAN/2010-08-08/"
 date=20100808
+sweep=0
 
 try:
 	os.mkdir(site)
@@ -50,14 +51,17 @@ for step in time_intervals:
 		images=site+"/"+str(date)+"/"+name+"/image/"
 		morp=site+"/"+str(date)+"/"+name+"/morph/"
 		filename=str(date)+"_"+site+"_"+name	
-		
-		interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,images,morp,filename)
+
+		fo=open((site+"/"+str(date)+"/"+name+"/"+name+".log"),"w")
+
+		interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,images,morp,filenamem,sweep,['DBZ2','HCLASS2'],fo)
 		
 		#write log
-		fo=open((site+"/"+str(date)+"/"+name+"/"+name+".log"),"w")
+		
 		fo.write("site: "+site+"\n")
 		fo.write("timestep: "+str(timesteps)+"\n")
 		fo.write("name: "+name+"\n")
+		fo.write("Sweep: "+str(sweep)+"\n")
 		fo.write("RADAR_FILE1: "+RADAR_FILE1+"\n")
 		fo.write("RADAR_FILE2: "+RADAR_FILE2+"\n")
 		fo.write("filename: "+filename)
