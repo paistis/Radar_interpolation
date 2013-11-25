@@ -72,8 +72,8 @@ def filler_filter(Data, nonmet=1):
         Return a boolean filtering mask, where values True corresponds to 
         meteorological object and False to non-meteorological object.
         """
-
-        im1 = zeros_like(Data.data[:,:,1])
+	Data = Data.data[:,:,0]
+        im1 = zeros_like(Data)
 	print im1.shape
         im1[Data==nonmet] = 2 # Non-meteorological objects
         im1[Data>nonmet] = 1 # Meteorological objects
@@ -212,7 +212,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 
 	grid1 = pyart.map.grid_from_radars(
 	    (radar1,),
-	    grid_shape=(rcells, rcells, 3),
+	    grid_shape=(rcells, rcells, 1),
 	    grid_limits=((dist, -dist), (dist, -dist),
 		         (10, 10)),
 	    fields=interpolated_variables,leafsize = 50)
@@ -220,7 +220,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 	print "griding second file..."
 	grid2 = pyart.map.grid_from_radars(
 	    (radar2,),
-	    grid_shape=(rcells, rcells, 3),
+	    grid_shape=(rcells, rcells, 1),
 	    grid_limits=((dist, -dist), (dist, -dist),
 		         (10, 10)),
 	    fields=interpolated_variables,leafsize = 50)
