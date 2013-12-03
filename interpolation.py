@@ -72,7 +72,7 @@ def filler_filter(Data, nonmet=1):
         Return a boolean filtering mask, where values True corresponds to 
         meteorological object and False to non-meteorological object.
         """
-	Data = Data.data[:,:,0]
+	#Data = Data.data[0,:,:]
         im1 = zeros_like(Data)
 	print im1.shape
         im1[Data==nonmet] = 2 # Non-meteorological objects
@@ -145,6 +145,24 @@ def get_sweep(radar,field,sweep):
 	radar.elevation['data'] = radar.elevation['data'][start:end]
 	#radar.range['data'] = radar.range['data'][start:end]
 
+def mask_grid(grid):
+	print "masking grid data"
+	data = grid.fields['HCLASS2']['data']
+	mask = filler_filter(data[0,:,:])
+	for field, field_dic in grid.fields.iteritems():
+		if (field != "ROI"):# and (field != "HCLASS2"):		
+			grid.fields[field]['data'] = np.ma.MaskedArray(grid.fields[field]['data'].data*mask,grid.fields[field]['data'].mask)
+	return grid
+
+def mask_radar(radar):
+	print "masking radar data"
+	data = radar.fields['HCLASS2']['data']
+	mask = filler_filter(data.data)
+	for field, field_dic in radar.fields.iteritems():
+		if (field != "ROI"):# and (field != "HCLASS2"):		
+			radar.fields[field]['data'] = np.ma.MaskedArray(radar.fields[field]['data'].data*mask,radar.fields[field]['data'].mask)
+	return radar
+
 #definitions for mask from HCLASS
 rain=2
 wet_snow=3
@@ -154,20 +172,13 @@ hail=6
 
 def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filename,sweep,interpolated_variables = ['DBZ2','HCLASS2'],log=None):
 	# Variables
-	#RADAR="VAN"
-	#RADAR_FILE1_path = "/home/lrojas/Documents/Research/Urban_Rainfall/Data/RAW/VAN/2010-08-08/201008081800_VAN.PPI1_A.raw"
-	#RADAR_FILE2_path = "/home/lrojas/Documents/Research/Urban_Rainfall/Data/RAW/VAN/2010-08-08/201008081805_VAN.PPI2_A.raw"
 	RADAR_FILE1 = os.path.basename(RADAR_FILE1_path)
 	RADAR_FILE2 = os.path.basename(RADAR_FILE2_path)
 	movement_variable = 'DBZ2'
-	#interpolated_variables = ['DBZ2','HCLASS2']
 	mask=rain
-	#timesteps = 10
-	#images = "images2/"
-	#morph = "morp2/"
-	#filename="test"
 	path = os.getcwd()
 	treshold=0.3
+	maskin='none'	
 
 	#Read radar data
 	print "Reading radar files"
@@ -186,20 +197,23 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 		get_sweep(radar2,field,sweep)
 
 	#saving non masked data
-	display = pyart.graph.RadarDisplay(radar1)
-	for field, field_dic in radar1.fields.iteritems():
-		geotiff2png.radarDisplay2geotiff(radar1,display,field+".tiff",field,0)
+	#display = pyart.graph.RadarDisplay(radar1)
+	#for field, field_dic in radar1.fields.iteritems():
+	#	geotiff2png.radarDisplay2geotiff(radar1,display,field+".tiff",field,0)
 
-	#data quality control
-	"""
-	print "masking radar data"
-	mask_ = filler_filter(radar1.fields['HCLASS2']['data'])
-	mask_2 = filler_filter(radar2.fields['HCLASS2']['data'])
-	for field in interpolated_variables:
-		if (field != "ROI"):# and (field != "HCLASS2"):		
-			radar1.fields[field]['data'] = np.ma.MaskedArray(radar1.fields[field]['data'].data*mask_,radar1.fields[field]['data'].mask)
-			radar2.fields[field]['data'] = np.ma.MaskedArray(radar2.fields[field]['data'].data*mask_2,radar2.fields[field]['data'].mask)
-	"""
+	# data quality control
+	if maskin == 'radar':
+                print "masking radar data"
+                mask_ = filler_filter(radar1.fields['HCLASS2']['data'])
+                mask_2 = filler_filter(radar2.fields['HCLASS2']['data'])
+                for field in interpolated_variables:
+                        if (field != "ROI"):# and (field != "HCLASS2"):         
+                                radar1.fields[field]['data'] = np.ma.MaskedArray(radar1.fields[field]['data'].data*mask_,radar1.fields[field]['data'].mask)
+                                radar2.fields[field]['data'] = np.ma.MaskedArray(radar2.fields[field]['data'].data*mask_2,radar2.fields[field]['data'].mask)
+		radar1 = mask_radar(radar1)
+		radar2 = mask_radar(radar2)
+
+	
 	# perform Cartesian mapping, limit to the reflectivity field.
 	#grid1 = pyart.io.grid.read_grid("test_grid1.nfc")
 	#grid2 = pyart.io.grid.read_grid("test_grid2.nfc")
@@ -212,7 +226,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 
 	grid1 = pyart.map.grid_from_radars(
 	    (radar1,),
-	    grid_shape=(rcells, rcells, 1),
+	    grid_shape=(rcells, rcells, 2),
 	    grid_limits=((dist, -dist), (dist, -dist),
 		         (10, 10)),
 	    fields=interpolated_variables,leafsize = 50)
@@ -220,7 +234,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 	print "griding second file..."
 	grid2 = pyart.map.grid_from_radars(
 	    (radar2,),
-	    grid_shape=(rcells, rcells, 1),
+	    grid_shape=(rcells, rcells, 2),
 	    grid_limits=((dist, -dist), (dist, -dist),
 		         (10, 10)),
 	    fields=interpolated_variables,leafsize = 50)
@@ -231,16 +245,9 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 		log.write("Gridding time: " + str(tmp.seconds))
 
 	#data Quality control
-	print "masking radar data"
-	mask_ = filler_filter(grid1.fields['HCLASS2']['data'])
-	mask_2 = filler_filter(grid2.fields['HCLASS2']['data'])
-	for field in interpolated_variables:
-		if (field != "ROI"):# and (field != "HCLASS2"):		
-			grid1.fields[field]['data'] = np.ma.MaskedArray(grid1.fields[field]['data'].data*mask_,grid1.fields[field]['data'].mask)
-			grid2.fields[field]['data'] = np.ma.MaskedArray(gird2.fields[field]['data'].data*mask_2,grid2.fields[field]['data'].mask)
-	grid1.write(images+RADAR_FILE1+"nonmasked.tiff",'GTiff')
-	grid2.write(images+RADAR_FILE2+"nonnmasked.tiff",'GTiff')
-
+	if maskin == 'grid':
+		grid1 = mask_grid(grid1)
+		grid2 = mask_grid(grid2)
 
 	grid1.write(images+RADAR_FILE1+".tiff",'GTiff')
 	grid2.write(images+RADAR_FILE2+".tiff",'GTiff')
@@ -278,6 +285,9 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 		image2 = images+RADAR_FILE2 +i+".png"
 		vec1 = filename+"_motion-motion1.pdvm"
 		vec2 = filename+"_motion-motion2.pdvm"
+		print vec1
+                print filename
+                print vec2
 
 		args=path+"/optflow/build/bin/morph3 --image1 " +image1+" --image2 "+image2+" --numtimesteps "+str(timesteps)+ " --algorithm proesmans --outprefix " + filename+"_"+i + " --vec1 "+vec1+" --vec2 "+ vec2
 		os.system(args)
@@ -293,12 +303,14 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 			os.remove(ifile)
 
 def main():
-	RADAR_FILE1_path = '201008081800_VAN.PPI1_A.raw'
-	RADAR_FILE2_path = '201008081820_VAN.PPI2_A.raw'
-	timesteps=21
-	morph='morp2/'
-	images='images2/'
-	filename='van_mask_after_gridding'
+	RADAR_FILE1_path = '/home/Radar/annakaisa_data/KUM111210114433.RAW1J3D'
+	RADAR_FILE2_path = '/home/Radar/annakaisa_data/KUM111210115015.RAW1J3F'
+	timesteps=9
+	#morph='/home/Radar/annakaisa_data/morp/'
+	#images='/home/Radar/annakaisa_data/images/'
+	morph="morp_annakaisa/"
+	images="images_annakaisa/"
+	filename='KUM114433-114831'
 	interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filename,0,['DBZ2','HCLASS2'])
 
-main()
+#main()
