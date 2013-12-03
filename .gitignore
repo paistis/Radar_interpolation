@@ -1,2 +1,3 @@
-optflow/build/
+optflow/build/*
+optflow_8bit/build/*
 lib/*.pyc

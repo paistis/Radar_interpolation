@@ -10,6 +10,7 @@ import pyart
 import geotiff2png
 import subprocess
 import glob
+import shutil
 from PIL import Image, ImageDraw, ImageChops, ImageFilter
 import matplotlib.pyplot as plt
 import datetime
@@ -167,7 +168,7 @@ snow=4
 graupel=5
 hail=6
 
-def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filename,sweep,interpolated_variables = ['DBZ2','HCLASS2'],log=None):
+def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,interpolated_variables = ['DBZ2','HCLASS2'],outfile_dir='/home/Radar/Int_Data/',log=None):
 	# Variables
 	RADAR_FILE1 = os.path.basename(RADAR_FILE1_path)
 	RADAR_FILE2 = os.path.basename(RADAR_FILE2_path)
@@ -187,7 +188,34 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 	print radar2.fields.keys()
 	# mask out last 10 gates of each ray, this removed the "ring" around th radar.
 	#radar1.fields['DBZ2']['data'][:, -10:] = np.ma.masked
-	#radar2.fields['DBZ2']['data'][:, -10:] = np.ma.masked
+	#radar2.fields['DBZ2']['data'][:, -10:] = np.ma.maskedi
+        # Data from raw file filename at the end should be interpolation interval(starting-endpoint)          there must be a fancy way of redaing the date also!
+        radar1_info=geotiff2png.radar_info(radar1)
+        radar2_info=geotiff2png.radar_info(radar1) 
+        site=radar1_info['site']
+        time=str(radar1_info['time'])
+        date=time[0:10]
+        print site
+        print date
+
+       #Checking the output directories exists otherwise create them     
+        if not os.path.exists(outfile_dir):
+               os.makedirs(outfile_dir)
+        date_path=outfile_dir+date
+        if not os.path.exists(date_path):
+                os.makedirs(date_path)
+        site_path=date_path+'/'+site+'/'
+        if not os.path.exists(site_path):
+                os.makedirs(site_path) 
+        if not os.path.exists(site_path+'/images/'):
+               os.makedirs(site_path+'/images')
+        images=site_path+'/images/'
+        if not os.path.exists(site_path+'/morph/'):
+               os.makedirs(site_path+'/morph/')
+        morph=site_path+'/morph/'
+        if not os.path.exists(site_path+'/motion/'):
+               os.makedirs(site_path+'/motion/')
+        motion=site_path+'/motion/'
 
 	#get sweep
 
@@ -230,6 +258,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 	    grid_limits=((dist, -dist), (dist, -dist),
 		         (10, 10)),
 	    fields=interpolated_variables,leafsize = 50)
+        #grid1.write(images+RADAR_FILE1)
 
 	print "griding second file..."
 	grid2 = pyart.map.grid_from_radars(
@@ -238,7 +267,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 	    grid_limits=((dist, -dist), (dist, -dist),
 		         (10, 10)),
 	    fields=interpolated_variables,leafsize = 50)
-
+        #grid2.write(images+RADAR_FILE2)
 	end_time = datetime.datetime.now()
 	if log is not None:
 		tmp = end_time-start_time
@@ -279,6 +308,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 	#step 2. interploate all interpolation variables using 16-bit optical flow algorithm
 	print "interploating"
 	path = os.getcwd()
+        print path
 	for i in interpolated_variables:
 		print "interpolating" + str(i) 
 		image1 = images+RADAR_FILE1 +i+".png"
@@ -288,16 +318,23 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 
 		args=path+"/optflow/build/bin/morph3 --image1 " +image1+" --image2 "+image2+" --numtimesteps "+str(timesteps)+ " --algorithm proesmans --outprefix " + filename+"_"+i + " --vec1 "+vec1+" --vec2 "+ vec2
 		os.system(args)
-
+        if not os.path.exists('motion'):
+               os.makedirs('motion')
 	print "making geotiffs"
 	#step 3 make geotiff's from interpolated images
+        
 	for i in interpolated_variables:
 		ifiles = glob.glob('*'+i+'*.png')
 		for ifile in ifiles:
 			ofile, ext = os.path.splitext(ifile)
-			ofile = path+"/"+morph+ofile + ".tiff"
+			ofile = morph+ofile + ".tiff"
 			geotiff2png.png2geotiff(ifile,i,ofile,grid1)
 			os.remove(ifile)
+        # Moving vector motion to the corresponding folder
+        mfiles=glob.glob('*_motion-motion*')
+        for mfile in mfiles:
+                 print mfile
+                 shutil.move(mfile,motion)
 
 def main():
 	RADAR_FILE1_path = '/home/Radar/annakaisa_data/KUM111210114433.RAW1J3D'
