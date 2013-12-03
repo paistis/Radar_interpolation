@@ -11,9 +11,31 @@ import matplotlib.pyplot as plt
 import Image
 import pyart
 import cmath, math
+import datetime
 
 # MAIN
+def radar_info(radar):
+	
+	site = radar.metadata['instrument_name']
+	site = site[0:3]
+	site = site.upper()
+	
+	scan_type = radar.scan_type	
 
+	time = radar.time['units']
+	time = time.split(' ')
+	time = time[-1]
+	time= datetime.datetime.strptime(time,'%Y-%m-%dT%H:%M:%SZ')
+		
+	output = {'site': site,'time':time,'scan_type': scan_type}
+	return output
+
+def rename_file(filename):
+	radar = pyart.io.read_sigmet(filename,sigmet_field_names=True, time_ordered='none')
+	info = radar_info(radar)
+	new_name = info['time'].strftime("%Y%m%d%H%M%S")+"_"+info['site']+"_"+info['scan_type']+".raw"		
+	path = os.path.dirname(filename)	
+	os.rename(filename,path+"/"+new_name)
 def geotiff2png(ifile,var,ofile,bit8=False):
 	if var=='DBZ2':
 		var = 'reflectivity_horizontal'
