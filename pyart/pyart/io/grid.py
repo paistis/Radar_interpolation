@@ -110,9 +110,6 @@ def write_grid_geotiff(filename,grid):
 	    rcells = ny*0.5
 	    dist = max(grid.axes['x_disp']['data'])
 	    rangestep = grid.axes['x_disp']['data'][1] - grid.axes['x_disp']['data'][2]
-	    print "dist :" + str(dist)
-	    print "rcells :" + str(rcells)
-	    print "rangestep :" + str(rangestep)
 	    lat = grid.axes['lat']['data'][0]
 	    lon = grid.axes['lon']['data'][0]
 	    data =  grid.fields[field]['data'][0].data
@@ -123,8 +120,6 @@ def write_grid_geotiff(filename,grid):
 	    out_driver = gdal.GetDriverByName("GTiff")
 	    dst_options = ['COMPRESS=LZW','ALPHA=YES']
 	    #print path+"/"+ofile
-	    print str(ofile)
-	    print "tset"
 	    dst_ds = out_driver.Create(str(path+"/"+ofile), int(2*rcells), int(2*rcells), 1, gdal.GDT_Float32, dst_options)
 	    dst_ds.SetGeoTransform( [ dist, -rangestep, 0, -dist, 0, rangestep ] )
 

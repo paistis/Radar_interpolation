@@ -17,14 +17,17 @@ import cmath, math
 def geotiff2png(ifile,var,ofile,bit8=False):
 	if var=='DBZ2':
 		var = 'reflectivity_horizontal'
-	print "ifile: " + ifile
-	print "ofile: " + ofile
+	if var=='KDP2':
+		var = 'diff_phase'
+	if var=='RHOHV2':
+		var='copol_coeff'
+	if var=='VEL2':
+		var='mean_doppler_velocity'
 	if os.path.exists(ifile):
 	    ds = gdal.Open(ifile)
 	    ilbm = ds.GetRasterBand(1).ReadAsArray()
 	    h,w = ilbm.shape
 	    size = int(2**(ceil(log(max(w,h))/log(2))))
-	    print "size: " + str(size)
 	    if (var == 'reflectivity_horizontal'):
 		
 		if(bit8 == True):
@@ -82,6 +85,12 @@ def png2geotiff(ifile,var,ofile,grid):
 	lbm2=Img
 	if var=='DBZ2':
 		var = 'reflectivity_horizontal'
+	if var=='KDP2':
+		var = 'diff_phase'
+	if var=='RHOHV2':
+		var='copol_coeff'
+	if var == 'VEL2':
+		var='mean_doppler_velocity'
 	if (var =='reflectivity_horizontal'):
 		#lbm2[lbm2 >= 65534] = nan
 		#lbm2[lbm2 <= 1] = nan

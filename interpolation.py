@@ -74,7 +74,6 @@ def filler_filter(Data, nonmet=1):
         """
 	#Data = Data.data[0,:,:]
         im1 = zeros_like(Data)
-	print im1.shape
         im1[Data==nonmet] = 2 # Non-meteorological objects
         im1[Data>nonmet] = 1 # Meteorological objects
 #        savetxt('Hclass_nofilled.txt',im1) # speckle hydro_class
@@ -82,7 +81,6 @@ def filler_filter(Data, nonmet=1):
         # Make a mask for removing non-mets from inside mets
         im2 = zeros_like(im1)
         im2[im1==1] = 1 # Meteorological objects
-	print type(im2)
         im2 = padder(im2) # Pad, fill and remove padding
         im2 = imfill(im2,1)
         im2 = rmpadder(im2)
@@ -140,7 +138,6 @@ def get_sweep(radar,field,sweep):
         end = ends[sweep] + 1
         data = radar.fields[field]['data'][start:end]
 	radar.fields[field]['data'] = data
-	print data.shape
 	radar.azimuth['data'] = radar.azimuth['data'][start:end]
 	radar.elevation['data'] = radar.elevation['data'][start:end]
 	#radar.range['data'] = radar.range['data'][start:end]
@@ -184,7 +181,10 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 	print "Reading radar files"
 	radar1 = pyart.io.read_sigmet(RADAR_FILE1_path,sigmet_field_names=True, time_ordered='none')
 	radar2 = pyart.io.read_sigmet(RADAR_FILE2_path,sigmet_field_names=True, time_ordered='none')
+	print "Fields in radar1 data"
 	print radar1.fields.keys()
+	print "Fields in radar2 data"
+	print radar2.fields.keys()
 	# mask out last 10 gates of each ray, this removed the "ring" around th radar.
 	#radar1.fields['DBZ2']['data'][:, -10:] = np.ma.masked
 	#radar2.fields['DBZ2']['data'][:, -10:] = np.ma.masked
@@ -285,9 +285,6 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filenam
 		image2 = images+RADAR_FILE2 +i+".png"
 		vec1 = filename+"_motion-motion1.pdvm"
 		vec2 = filename+"_motion-motion2.pdvm"
-		print vec1
-                print filename
-                print vec2
 
 		args=path+"/optflow/build/bin/morph3 --image1 " +image1+" --image2 "+image2+" --numtimesteps "+str(timesteps)+ " --algorithm proesmans --outprefix " + filename+"_"+i + " --vec1 "+vec1+" --vec2 "+ vec2
 		os.system(args)

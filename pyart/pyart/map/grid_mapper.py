@@ -398,12 +398,6 @@ def map_to_grid(radars, grid_shape=(81, 81, 69),
         # calculate cartesian locations of gates
         rg, azg = np.meshgrid(radar.range['data'], radar.azimuth['data'])
         rg, eleg = np.meshgrid(radar.range['data'], radar.elevation['data'])
-	print "rg"
-	print rg.shape
-	print "azg"
-	print azg.shape
-	print "eleg"
-	print eleg.shape
         xg_loc, yg_loc, zg_loc = radar_coords_to_cart(rg / 1000., azg, eleg)
         del rg, azg, eleg
 
