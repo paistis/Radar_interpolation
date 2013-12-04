@@ -9,7 +9,7 @@ time_intervals = [5,10,15]
 start_time=1800
 end_time=1900
 site="VAN"
-data_path = "/home/nordlikg/Documents/data/RAW/VAN/2010-08-08/"
+data_path = "/home/radar/data/RAW/VAN/2010-08-08/"
 date=20100808
 sweep=0
 
