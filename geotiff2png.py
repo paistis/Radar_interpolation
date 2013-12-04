@@ -12,6 +12,7 @@ import Image
 import pyart
 import cmath, math
 import datetime
+import shutil
 
 # MAIN
 def radar_info(radar):
@@ -35,7 +36,7 @@ def rename_file(filename):
 	info = radar_info(radar)
 	new_name = info['time'].strftime("%Y%m%d%H%M%S")+"_"+info['site']+"_"+info['scan_type']+".raw"		
 	path = os.path.dirname(filename)	
-	os.rename(filename,path+"/"+new_name)
+        shutil.move(filename,path+"/"+new_name)
 def geotiff2png(ifile,var,ofile,bit8=False):
 	if var=='DBZ2':
 		var = 'reflectivity_horizontal'
