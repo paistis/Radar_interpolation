@@ -176,7 +176,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 	mask=rain
 	path = os.getcwd()
 	treshold=0.3
-	maskin='none'	
+	maskin='radar'	
 
 	#Read radar data
 	print "Reading radar files"
@@ -231,13 +231,6 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 
 	# data quality control
 	if maskin == 'radar':
-                print "masking radar data"
-                mask_ = filler_filter(radar1.fields['HCLASS2']['data'])
-                mask_2 = filler_filter(radar2.fields['HCLASS2']['data'])
-                for field in interpolated_variables:
-                        if (field != "ROI"):# and (field != "HCLASS2"):         
-                                radar1.fields[field]['data'] = np.ma.MaskedArray(radar1.fields[field]['data'].data*mask_,radar1.fields[field]['data'].mask)
-                                radar2.fields[field]['data'] = np.ma.MaskedArray(radar2.fields[field]['data'].data*mask_2,radar2.fields[field]['data'].mask)
 		radar1 = mask_radar(radar1)
 		radar2 = mask_radar(radar2)
 
@@ -345,6 +338,6 @@ def main():
 	morph="morp_annakaisa/"
 	images="images_annakaisa/"
 	filename='KUM114433-114831'
-	interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,images,morph,filename,0,['DBZ2','HCLASS2'])
+	interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,0,['DBZ2','HCLASS2'])
 
-#main()
+main()
