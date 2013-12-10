@@ -176,9 +176,10 @@ def getCartesian(indata ):
                   		pcart[x + dimx,y + dimx] = indata[int(180. / pi * p[1] * dimy / 360.),int(p[0])]
 	return pcart
 
-def radarDisplay2geotiff(radar,display,ofile,field,tilt):	
+def radarDisplay2geotiff(radar,ofile,field,tilt):	
 
 	#test
+	display = pyart.graph.RadarDisplay(radar)
 	data = display._get_data(field, tilt, None)
         x, y = display._get_x_y(field, tilt)
     	#ax = plt.gca()
