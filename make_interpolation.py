@@ -39,11 +39,18 @@ for site in sites:
 				
 				print raws+"RAW/"+site+'/'+day+'/'+str(date)+str(start)+"*_"+site+"_ppi.raw"
 				ERROR=''
-				try:
-					RADAR_FILE1=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(start)+"*_"+site+"_ppi.raw")[0]
-					RADAR_FILE2=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(end)+"*_"+site+"_ppi.raw")[0]
-				except:
-					continue
+				if site != 'VAN':
+					try:
+						RADAR_FILE1=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(start)+"*_"+site+"_ppi.raw")[0]
+						RADAR_FILE2=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(end)+"*_"+site+"_ppi.raw")[0]
+					except:
+						continue
+				else: 
+					try:
+						RADAR_FILE1=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(start)+"_VAN.PPI*_A.raw")[0]
+						RADAR_FILE2=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(end)+"_VAN.PPI*_A.raw")[0]
+					except:
+						continue			
 				name=str(start)+"-"+str(end)
 		
 
