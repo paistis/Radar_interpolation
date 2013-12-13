@@ -5,66 +5,71 @@ import sys,os,glob
 #config = sys.argv[1]
 #execfile(config)
 
-time_intervals = [5,10,15]
-start_time=1800
-end_time=1900
-site="VAN"
-data_path = "/home/radar/data/RAW/VAN/2010-08-08/"
-date=20100808
-sweep=0
+cases = {'2010-07-15':'1500-1600','2010-08-08':'1800-1900','2011-11-27':'1900-1500','2011-12-26':'0200-0300','2012-03-28':'1700-1800','2012-06-17':'0700-0800','2012-06-17':'1400-1500','2012-04-01':'1100-1300','2012-10-05':'1200-1300','2012-12-26':'1900-2000','2013-08-14':'1200-1300'}
+sites = ['KER','KUM','VAN']
+data_path = "/home/Radar/Int_Data/"
+raws = "/home/Radar/data/"
+cases= {'2010-07-15':'1500-1600','2010-08-08':'1800-1900'}
+for site in sites:
+	print site
+	for day, hours in cases.items():
+		time_intervals = [5,10,15]
+		start_time=hours.split('-')[0]
+		end_time=hours.split('-')[1]
+		date=''.join(day.split('-'))
+		sweep=0
 
-try:
-	os.mkdir(site)
-except:
-	print "Site folder already exist.. not creating it"
-try:
-	os.mkdir(site+"/"+str(date))
-except:
-	print "Site folder already exist.. not creating it"
 
-for step in time_intervals:
-	for i in range(0,60/step):
+		for step in time_intervals:
+			if (step == 5) and (site != 'VAN'):
+				print step
+				print "skipping"
+				continue
+			if (site == 'KER') and (step != 15):
+				print step
+				print "skipping"
+				continue
+			for i in range(0,60/step):
 
-		timesteps=step+1
-		start=start_time+i*step
-		end=start+step
-		if end >= start_time+60:
-			end=end_time
-		RADAR_FILE1=glob.glob(data_path+"/"+str(date)+str(start)+"_VAN.PPI*_A.raw")[0]
-		RADAR_FILE2=glob.glob(data_path+"/"+str(date)+str(end)+"_VAN.PPI*_A.raw")[0]
+				timesteps=step+1
+				start=int(start_time)+i*step
+				end=int(start)+step
+				if end >= int(start_time)+60:
+					end=end_time
+				
+				print raws+"RAW/"+site+'/'+day+'/'+str(date)+str(start)+"*_"+site+"_ppi.raw"
+				ERROR=''
+				try:
+					RADAR_FILE1=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(start)+"*_"+site+"_ppi.raw")[0]
+					RADAR_FILE2=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(end)+"*_"+site+"_ppi.raw")[0]
+				except:
+					continue
+				name=str(start)+"-"+str(end)
 		
-		name=str(start)+"-"+str(end)
-		try:
-			os.mkdir(site+"/"+str(date)+"/"+name)
-		except:
-			print "Site name folder already exist"
-		try:
-			os.mkdir(site+"/"+str(date)+"/"+name+"/image/")
-		except:
-			print "Site image folder already exist"
-		try:
-			os.mkdir(site+"/"+str(date)+"/"+name+"/morph/")
-		except:
-			print "Site morph folder already exist"
 
-		
-		images=site+"/"+str(date)+"/"+name+"/image/"
-		morp=site+"/"+str(date)+"/"+name+"/morph/"
-		filename=str(date)+"_"+site+"_"+name	
+				filename=site+"_"+date+'_'+'hours'+'_TS_'+str(step)+'.log'
+				fo=open(filename,"w")
+				
+				print "starting interpolation:"
+				print "site: "+site
+				print "timestep: "+str(timesteps)
+				print "name: "+name
+				print "Sweep: "+str(sweep)
+				print "RADAR_FILE1: "+RADAR_FILE1
+				print "RADAR_FILE2: "+RADAR_FILE2
+				print "filename: "+filename
 
-		fo=open((site+"/"+str(date)+"/"+name+"/"+name+".log"),"w")
-
-		interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,images,morp,filenamem,sweep,['DBZ2','HCLASS2'],fo)
+				interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,filename,sweep,['DBZ2','HCLASS2'],data_path,fo)
+				
+				#write log
 		
-		#write log
-		
-		fo.write("site: "+site+"\n")
-		fo.write("timestep: "+str(timesteps)+"\n")
-		fo.write("name: "+name+"\n")
-		fo.write("Sweep: "+str(sweep)+"\n")
-		fo.write("RADAR_FILE1: "+RADAR_FILE1+"\n")
-		fo.write("RADAR_FILE2: "+RADAR_FILE2+"\n")
-		fo.write("filename: "+filename)
-		fo.close()
+				fo.write("site: "+site+"\n")
+				fo.write("timestep: "+str(timesteps)+"\n")
+				fo.write("name: "+name+"\n")
+				fo.write("Sweep: "+str(sweep)+"\n")
+				fo.write("RADAR_FILE1: "+RADAR_FILE1+"\n")
+				fo.write("RADAR_FILE2: "+RADAR_FILE2+"\n")
+				fo.write("filename: "+filename)
+				fo.close()
 		
 		

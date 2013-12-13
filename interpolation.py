@@ -180,8 +180,19 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 
 	#Read radar data
 	print "Reading radar files"
-	radar1 = pyart.io.read_sigmet(RADAR_FILE1_path,sigmet_field_names=True, time_ordered='none')
-	radar2 = pyart.io.read_sigmet(RADAR_FILE2_path,sigmet_field_names=True, time_ordered='none')
+	try:
+		radar1 = pyart.io.read_sigmet(RADAR_FILE1_path,sigmet_field_names=True, time_ordered='none')		
+	except:
+		print "Raw file " + RADAR_FILE1_path + " does not exist"
+		log.write("Raw file " + RADAR_FILE1_path + " does not exist")
+		return
+	try:	
+		radar2 = pyart.io.read_sigmet(RADAR_FILE2_path,sigmet_field_names=True, time_ordered='none')
+	except:
+		print "Raw file " + RADAR_FILE2_path + " does not exist"
+		log.write("Raw file " + RADAR_FILE2_path + " does not exist")
+		return
+
 	print "Fields in radar1 data"
 	print radar1.fields.keys()
 	print "Fields in radar2 data"
@@ -240,8 +251,18 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 	#grid2 = pyart.io.grid.read_grid("test_grid2.nfc")
 
 	print "griding first file..."
-	dist = radar1.range['data'][-1]
-	rcells = radar1.ngates
+	dist1 = radar1.range['data'][-1]
+	rcells1 = radar1.ngates
+
+	dist2 = radar2.range['data'][-1]
+	rcells2 = radar2.ngates
+	
+	if (dist1!=dist2) or (rcells1 != rcells2):
+		log.write("ERROR: Different resolutin \n")
+		return
+
+	dist=dist1
+	rcells=rcells1
 
 	start_time = datetime.datetime.now()
 
@@ -264,7 +285,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 	end_time = datetime.datetime.now()
 	if log is not None:
 		tmp = end_time-start_time
-		log.write("Gridding time: " + str(tmp.seconds))
+		log.write("Gridding time: " + str(tmp.seconds)+"\n")
 
 	#data Quality control
 	if maskin == 'grid':
@@ -340,4 +361,4 @@ def main():
 	filename='KUM114433-114831'
 	interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,0,['DBZ2','HCLASS2'])
 
-main()
+
