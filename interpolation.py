@@ -198,9 +198,15 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 	print "Fields in radar2 data"
 	print radar2.fields.keys()
 
-	if(radar1.fields.keys() == radar2.fields.keys()):	
-		print "keys are not same"
-		return
+	#check that interpolatit values are in radar files
+
+	for val in interpolated_variables:
+		if not val in radar1.fields.keys():
+			print "radar 1 did'n contain value " + val
+			return
+		if not val in radar2.fields.keys():
+			print "radar 2 did'n contain value " + val
+			return
 
 	# mask out last 10 gates of each ray, this removed the "ring" around th radar.
 	#radar1.fields['DBZ2']['data'][:, -10:] = np.ma.masked
