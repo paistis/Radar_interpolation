@@ -215,7 +215,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
         date_path=outfile_dir+date
         if not os.path.exists(date_path):
                 os.makedirs(date_path)
-        site_path=date_path+'/'+site+'/'
+        site_path=date_path+'/'+site
         if not os.path.exists(site_path):
                 os.makedirs(site_path) 
         if not os.path.exists(site_path+'/images/'):
@@ -348,7 +348,10 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
         mfiles=glob.glob('*_motion-motion*')
         for mfile in mfiles:
                  print mfile
-                 shutil.move(mfile,motion)
+		 try:
+                 	shutil.move(mfile,motion)
+		  except:
+			print "trying to move mfile"
 
 def main():
 	RADAR_FILE1_path = '/home/Radar/annakaisa_data/KUM111210114433.RAW1J3D'
