@@ -350,7 +350,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
                  print mfile
 		 try:
                  	shutil.move(mfile,motion)
-		  except:
+		 except:
 			print "trying to move mfile"
 
 def main():
