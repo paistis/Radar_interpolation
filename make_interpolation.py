@@ -54,8 +54,8 @@ for site in sites:
 				name=str(start)+"-"+str(end)
 		
 
-				filename=site+"_"+date+'_'+'hours'+str(start)+'-'+str(end)+'_TS_'+str(step)+'.log'
-				fo=open(filename,"w")
+				filename=site+"_"+date+'_'+'hours'+str(start)+'-'+str(end)+'_TS_'+str(step)
+				fo=open(filename+".log","w")
 				
 				print "starting interpolation:"
 				print "site: "+site
