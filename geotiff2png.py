@@ -45,12 +45,7 @@ def geotiff2png(ifile,var,ofile,bit8=False):
 	if var=='RHOHV2':
 		var='copol_coeff'
 	if var=='VEL2':
-		var='mean_doppler_velocity'
-	if var == 'ZDR2':
-		var='ZDR2'
-		ilbm[ilbm >= 327.66] = nan
-	   	ilbm[ilbm <= -327.67] = nan
-		ilbm = np.round((100.0*ilbm+32768.0))	
+		var='mean_doppler_velocity'	
 
 	if os.path.exists(ifile):
 	    ds = gdal.Open(ifile)
@@ -88,7 +83,11 @@ def geotiff2png(ifile,var,ofile,bit8=False):
 		ilbm = np.round(100.0*ilbm+32768)
 		ilbm[ilbm <= 0] = nan
 		ilbm[ilbm >= 65535] = nan
-
+	    if var == 'ZDR2':
+		var='ZDR2'
+		ilbm[ilbm >= 327.66] = nan
+	   	ilbm[ilbm <= -327.67] = nan
+		ilbm = np.round((100.0*ilbm+32768.0))
 	    ilbm = ilbm.astype('int32')
 	    img = scipy.misc.toimage(ilbm,high=np.max(ilbm),low=np.min(ilbm),mode='I')
 	    img = img.resize((size,size))
