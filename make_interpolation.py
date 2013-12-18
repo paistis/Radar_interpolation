@@ -79,16 +79,12 @@ for site in sites:
 				print "RADAR_FILE2: "+RADAR_FILE2
 				print "filename: "+filename
 
-<<<<<<< HEAD
-				tmp = interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,filename,sweep,['DBZ2','HCLASS2'],data_path,fo)
+
+				tmp = interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,filename,sweep,['DBZ2','HCLASS2','KDP2','RHOHV2','VEL2','ZDR2'],data_path,fo)
 				if tmp is None:
 					print "Error in interpolation"
 					continue
 
-=======
-				interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,filename,sweep,['DBZ2','HCLASS2','KDP2','RHOHV2','VEL2'],data_path,fo)
->>>>>>> 73e8c465130df5df940e72add6d471bd1ad33964
-				
 				#write log
 		
 				fo.write("site: "+site+"\n")
