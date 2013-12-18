@@ -66,7 +66,7 @@ for site in sites:
 				print "RADAR_FILE2: "+RADAR_FILE2
 				print "filename: "+filename
 
-				interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,filename,sweep,['DBZ2','HCLASS2','KDP2','RHOVH2','VEL2'],data_path,fo)
+				interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,filename,sweep,['DBZ2','HCLASS2','KDP2','RHOHV2','VEL2'],data_path,fo)
 				
 				#write log
 		
