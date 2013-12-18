@@ -46,6 +46,12 @@ def geotiff2png(ifile,var,ofile,bit8=False):
 		var='copol_coeff'
 	if var=='VEL2':
 		var='mean_doppler_velocity'
+	if var == 'ZDR2':
+		var='ZDR2'
+		ilbm[ilbm >= 327.66] = nan
+	   	ilbm[ilbm <= -327.67] = nan
+		ilbm = np.round((100.0*ilbm+32768.0))	
+
 	if os.path.exists(ifile):
 	    ds = gdal.Open(ifile)
 	    ilbm = ds.GetRasterBand(1).ReadAsArray()
@@ -114,6 +120,12 @@ def png2geotiff(ifile,var,ofile,grid):
 		var='copol_coeff'
 	if var == 'VEL2':
 		var='mean_doppler_velocity'
+	if var == 'ZDR2':
+		var='ZDR2'
+		lbm2 = (lbm2-32768.0)/100.0
+		lbm2[lbm2 >= 327.66] = nan
+   		lbm2[lbm2 <= -325.00] = nan			
+
 	if (var =='reflectivity_horizontal'):
 		#lbm2[lbm2 >= 65534] = nan
 		#lbm2[lbm2 <= 1] = nan
