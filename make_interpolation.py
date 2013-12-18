@@ -5,11 +5,11 @@ import sys,os,glob
 #config = sys.argv[1]
 #execfile(config)
 
-cases = {'2010-07-15':'1500-1600','2010-08-08':'1800-1900','2011-11-27':'1900-1500','2011-12-26':'0200-0300','2012-03-28':'1700-1800','2012-06-17':'0700-0800','2012-06-17':'1400-1500','2012-04-01':'1100-1300','2012-10-05':'1200-1300','2012-12-26':'1900-2000','2013-08-14':'1200-1300'}
-sites = ['KUM','VAN']
+cases = {'2011-11-27':'1900-1500','2011-12-26':'0200-0300','2012-03-28':'1700-1800','2012-06-17':'0700-0800','2012-06-17':'1400-1500','2012-04-01':'1100-1300','2012-10-05':'1200-1300','2012-12-26':'1900-2000','2013-08-14':'1200-1300'}
+sites = ['KUM','VAN','KER']
 data_path = "/home/Radar/Int_Data/"
 raws = "/home/Radar/data/"
-cases= {'2010-07-15':'1500-1600','2010-08-08':'1800-1900'}
+#cases= {'2010-07-15':'1500-1600','2010-08-08':'1800-1900'}
 for site in sites:
 	print site
 	for day, hours in cases.items():
@@ -66,7 +66,7 @@ for site in sites:
 				print "RADAR_FILE2: "+RADAR_FILE2
 				print "filename: "+filename
 
-				interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,filename,sweep,['DBZ2','HCLASS2'],data_path,fo)
+				interpolation.interpolate(RADAR_FILE1,RADAR_FILE2,timesteps,filename,sweep,['DBZ2','HCLASS2','KDP2','RHOVH2','VEL2'],data_path,fo)
 				
 				#write log
 		
