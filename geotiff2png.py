@@ -13,8 +13,17 @@ import pyart
 import cmath, math
 import datetime
 import shutil
+import subprocess
 
 # MAIN
+
+def get_task(filename):
+	#filename should be full path to the file
+	tmp = subprocess.check_output(["strings",path])
+	tmp = tmp.split(' ')
+	return tmp[0]
+	
+
 def radar_info(radar):
 	
 	site = radar.metadata['instrument_name']
@@ -149,9 +158,9 @@ def png2geotiff(ifile,var,ofile,grid):
 	if (var =='copol_coeff'):
 		#lbm2[lbm2 >= 65534] = nan
 		#lbm2[lbm2 <= 1] = nan
-		lbm2 = (lbm2-32768.0)/100.0
-		lbm2[lbm2 >= 327.66] = nan
-   		lbm2[lbm2 <= -325.00] = nan
+		lbm2 = ((lbm2-1)/65533)
+		lbm2[lbm < 0] = nan
+		lbm2[lbm > 1] = nan
 
 	nx,ny = arr.shape
 

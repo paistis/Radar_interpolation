@@ -6,7 +6,7 @@ import sys,os,glob
 #execfile(config)
 
 cases = {'2010-07-15':'1500-1600','2010-08-08':'1800-1900','2011-11-27':'1900-1500','2011-12-26':'0200-0300','2012-03-28':'1700-1800','2012-06-17':'0700-0800','2012-06-17':'1400-1500','2012-04-01':'1100-1300','2012-10-05':'1200-1300','2012-12-26':'1900-2000','2013-08-14':'1200-1300'}
-sites = ['KUM','KER']
+sites = ['KER']
 data_path = "/home/Radar/Int_Data/"
 raws = "/home/Radar/data/"
 cases= {'2010-07-15':'1500-1600'}
@@ -44,12 +44,26 @@ for site in sites:
 				if site != 'VAN':
 					try:
 						print "getting radar files"
-						RADAR_FILE1=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(start_tmp)+"*_"+site+"_ppi.raw")[0]
-						RADAR_FILE2=glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(end_tmp)+"*_"+site+"_ppi.raw")[0]				
-						continue
+						RADAR_FILE1 = []
+						RADAR_FILE2 = []
+						for tmp in range(0,5):
+							RADAR_FILE1 += glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(start-tmp)+"*_"+site+"_ppi.raw")
+							RADAR_FILE1 += glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(start+tmp)+"*_"+site+"_ppi.raw")
+
+							RADAR_FILE2 += glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(end+tmp)+"*_"+site+"_ppi.raw")
+							RADAR_FILE2 += glob.glob(raws+"RAW/"+site+'/'+day+'/'+str(date)+str(end-tmp)+"*_"+site+"_ppi.raw")
+						
+						
+						
+						print RADAR_FILE1
+						print RADAR_FILE2
+						RADAR_FILE1 = RADAR_FILE1[0]
+						RADAR_FILE2 = RADAR_FILE2[0]
+						
 					except:
 						print "error reading files"
 						continue
+						
 				else: 
 					try:
 						print "getting radar files"
