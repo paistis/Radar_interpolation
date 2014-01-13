@@ -114,7 +114,7 @@ def write_grid_geotiff(filename,grid):
 	    lon = grid.axes['lon']['data'][0]
 	    data =  grid.fields[field]['data'][0].data
 
- 	    data[data == 0] = nan
+ 	    #data[data == 0] = nan
 	    data[data == -9999] = nan
 
 	    out_driver = gdal.GetDriverByName("GTiff")

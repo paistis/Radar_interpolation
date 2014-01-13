@@ -243,10 +243,10 @@ def map_to_grid(radars, grid_shape=(81, 81, 69),
                 grid_limits=((-30000., 20000), (-20000., 20000.), (0, 17000.)),
                 grid_origin=None, fields=None,
                 refl_field='DBZ2', max_refl=190.0,
-                qrf_func=None, map_roi=True, weighting_function='Barnes',
+                qrf_func=None, map_roi=True, weighting_function='CRESSMAN',
                 toa=17000.0,
                 h_factor=1.0, nb=1.5, bsp=1.0, min_radius=500.0,
-                copy_field_data=True, algorithm='kd_tree', leafsize = 10,
+                copy_field_data=False, algorithm='kd_tree', leafsize = 10,
                 badval=-9999.0):
     """
     Map one or more radars to a Cartesian grid.
@@ -530,7 +530,7 @@ def map_to_grid(radars, grid_shape=(81, 81, 69),
         # preforms weighting of neighbors.
         dist2 = dist * dist
         r2 = r * r
-
+		
         if weighting_function.upper() == 'CRESSMAN':
             weights = (r2 - dist2) / (r2 + dist2)
             value = np.average(nn_field_data, weights=weights, axis=0)

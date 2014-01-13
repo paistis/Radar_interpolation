@@ -270,6 +270,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 	
 	if (dist1!=dist2) or (rcells1 != rcells2):
 		log.write("ERROR: Different resolutin \n")
+		print "ERROR: Different resolutin"
 		return
 
 	dist=dist1

@@ -46,6 +46,7 @@ def rename_file(filename):
 	new_name = info['time'].strftime("%Y%m%d%H%M%S")+"_"+info['site']+"_"+info['scan_type']+".raw"		
 	path = os.path.dirname(filename)	
         shutil.move(filename,path+"/"+new_name)
+
 def geotiff2png(ifile,var,ofile,bit8=False):
 	if var=='DBZ2':
 		var = 'reflectivity_horizontal'
@@ -158,9 +159,9 @@ def png2geotiff(ifile,var,ofile,grid):
 	if (var =='copol_coeff'):
 		#lbm2[lbm2 >= 65534] = nan
 		#lbm2[lbm2 <= 1] = nan
-		lbm2 = ((lbm2-1)/65533)
-		lbm2[lbm < 0] = nan
-		lbm2[lbm > 1] = nan
+		lbm2 = ((lbm2-1)/65533.0)
+		lbm2[lbm2 < 0] = nan
+		lbm2[lbm2 > 1] = nan
 
 	nx,ny = arr.shape
 
