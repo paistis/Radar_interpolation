@@ -242,7 +242,7 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 	#get sweep
 
 	print "geting sweep"
-	for field, field_dic in radar1.fields.iteritems():
+	for field in interpolated_variables:
 		get_sweep(radar1,field,sweep)
 		get_sweep(radar2,field,sweep)
 

@@ -19,7 +19,7 @@ import subprocess
 
 def get_task(filename):
 	#filename should be full path to the file
-	tmp = subprocess.check_output(["strings",path])
+	tmp = subprocess.check_output(["strings",filename])
 	tmp = tmp.split(' ')
 	return tmp[0]
 	
