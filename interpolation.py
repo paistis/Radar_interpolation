@@ -152,11 +152,11 @@ def mask_grid(grid):
 			grid.fields[field]['data'] = np.ma.MaskedArray(grid.fields[field]['data'].data*mask,grid.fields[field]['data'].mask)
 	return grid
 
-def mask_radar(radar):
+def mask_radar(radar,var):
 	print "masking radar data"
 	data = radar.fields['HCLASS2']['data']
 	mask = filler_filter(data.data)
-	for field, field_dic in radar.fields.iteritems():
+	for field in var:
 		if (field != "ROI"):# and (field != "HCLASS2"):		
 			radar.fields[field]['data'] = np.ma.MaskedArray(radar.fields[field]['data'].data*mask,radar.fields[field]['data'].mask)
 	return radar
@@ -253,8 +253,8 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 
 	# data quality control
 	if maskin == 'radar':
-		radar1 = mask_radar(radar1)
-		radar2 = mask_radar(radar2)
+		radar1 = mask_radar(radar1,interpolated_variables)
+		radar2 = mask_radar(radar2,interpolated_variables)
 
 	
 	# perform Cartesian mapping, limit to the reflectivity field.
