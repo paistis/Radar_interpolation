@@ -41,7 +41,7 @@ def radar_info(radar):
 	return output
 
 def rename_file(filename):
-	radar = pyart.io.read_sigmet(filename,sigmet_field_names=True, time_ordered='none')
+	radar = pyart.io.read_sigmet(filename,file_field_names=True, time_ordered='none')
 	info = radar_info(radar)
 	new_name = info['time'].strftime("%Y%m%d%H%M%S")+"_"+info['site']+"_"+info['scan_type']+".raw"		
 	path = os.path.dirname(filename)	
