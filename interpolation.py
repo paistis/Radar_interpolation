@@ -181,13 +181,13 @@ def interpolate(RADAR_FILE1_path,RADAR_FILE2_path,timesteps,filename,sweep,inter
 	#Read radar data
 	print "Reading radar files"
 	try:
-		radar1 = pyart.io.read_sigmet(RADAR_FILE1_path,sigmet_field_names=True, time_ordered='none')		
+		radar1 = pyart.io.read_sigmet(RADAR_FILE1_path,file_field_names=True, time_ordered='none')		
 	except:
 		print "Raw file " + RADAR_FILE1_path + " does not exist"
 		log.write("Raw file " + RADAR_FILE1_path + " does not exist")
 		return
 	try:	
-		radar2 = pyart.io.read_sigmet(RADAR_FILE2_path,sigmet_field_names=True, time_ordered='none')
+		radar2 = pyart.io.read_sigmet(RADAR_FILE2_path,file_field_names=True, time_ordered='none')
 	except:
 		print "Raw file " + RADAR_FILE2_path + " does not exist"
 		log.write("Raw file " + RADAR_FILE2_path + " does not exist")
